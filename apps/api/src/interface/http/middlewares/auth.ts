@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { UnauthorizedError, ForbiddenError } from '../../../domain/errors/AppError.js';
-import { verifyAccessToken, JwtPayload } from '../../../utils/jwt.js';
+import { verifyAccessToken } from '../../../utils/jwt.js';
 import { prisma } from '../../../infrastructure/database/prisma.js';
 
 declare global {

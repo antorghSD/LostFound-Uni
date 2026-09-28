@@ -2,7 +2,12 @@ import { z } from 'zod';
 
 export const registerBodySchema = z.object({
   name: z.string().min(2).max(100),
-  email: z.string().email(),
+  email: z
+    .string()
+    .email()
+    .refine((email) => email.endsWith('@uiu.ac.bd'), {
+      message: 'Only @uiu.ac.bd email addresses are allowed',
+    }),
   password: z
     .string()
     .min(10, 'Password must be at least 10 characters')
@@ -28,5 +33,17 @@ export const loginSchema = z.object({
 export const refreshSchema = z.object({
   body: z.object({
     refreshToken: z.string().min(1),
+  }),
+});
+
+export const changePasswordSchema = z.object({
+  body: z.object({
+    currentPassword: z.string().min(1),
+    newPassword: z
+      .string()
+      .min(10, 'Password must be at least 10 characters')
+      .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+      .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+      .regex(/[0-9]/, 'Must contain at least one number'),
   }),
 });

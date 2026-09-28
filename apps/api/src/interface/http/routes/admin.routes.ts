@@ -23,17 +23,27 @@ router.get('/users', asyncHandler(async (_req, res) => {
 }));
 
 router.patch('/users/:id/ban', asyncHandler(async (req, res) => {
-  const u = await prisma.user.update({ where: { id: req.params.id }, data: { isBanned: req.body.ban, banReason: req.body.reason } });
+  const userId = String(req.params.id);
+  const u = await prisma.user.update({
+    where: { id: userId },
+    data: { isBanned: req.body.ban, banReason: req.body.reason },
+  });
   res.json({ success: true, data: u });
 }));
 
 router.patch('/users/:id/verify', asyncHandler(async (req, res) => {
-  const u = await prisma.user.update({ where: { id: req.params.id }, data: { isVerified: true } });
+  const userId = String(req.params.id);
+  const u = await prisma.user.update({
+    where: { id: userId },
+    data: { isVerified: true },
+  });
   res.json({ success: true, data: u });
 }));
-
-router.get('/audit-logs', asyncHandler(async (req, res) => {
-  const logs = await prisma.auditLog.findMany({ orderBy: { createdAt: 'desc' }, take: 200 });
+router.get('/audit-logs', asyncHandler(async (_req, res) => {
+  const logs = await prisma.auditLog.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: 200,
+  });
   res.json({ success: true, data: logs });
 }));
 

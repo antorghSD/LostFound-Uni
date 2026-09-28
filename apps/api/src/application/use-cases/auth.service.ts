@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { prisma } from '../../infrastructure/database/prisma.js';
-import { AppError, ConflictError, UnauthorizedError } from '../../domain/errors/AppError.js';
+import { ConflictError, UnauthorizedError } from '../../domain/errors/AppError.js';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../utils/jwt.js';
 
 const BCRYPT_COST = 12;
@@ -113,6 +113,28 @@ export class AuthService {
     const tokenHash = this.hashToken(refreshToken);
     await prisma.session.deleteMany({ where: { refreshTokenHash: tokenHash } });
   }
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new UnauthorizedError('User not found');
+
+  const ok = await bcrypt.compare(currentPassword, user.passwordHash);
+  if (!ok) throw new UnauthorizedError('Current password is incorrect');
+
+  const newHash = await bcrypt.hash(newPassword, BCRYPT_COST);
+  await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash: newHash },
+  });
+
+  // Revoke all sessions for security
+  await prisma.session.deleteMany({ where: { userId } });
+
+  await prisma.auditLog.create({
+    data: { actorId: userId, action: 'auth.changePassword' },
+  });
+
+  return { success: true };
+}
 
   // ---------- helpers ----------
 

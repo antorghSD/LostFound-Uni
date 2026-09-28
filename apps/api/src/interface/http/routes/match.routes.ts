@@ -4,8 +4,11 @@ import { asyncHandler } from '../../../utils/asyncHandler.js';
 import { matchService } from '../../../application/use-cases/match.service.js';
 
 const router = Router();
+
 router.get('/item/:itemId', authenticate, asyncHandler(async (req, res) => {
-  const matches = await matchService.listMatchesForItem(req.params.itemId);
+  const itemId = String(req.params.itemId);
+  const matches = await matchService.listMatchesForItem(itemId);
   res.json({ success: true, data: matches });
 }));
+
 export default router;

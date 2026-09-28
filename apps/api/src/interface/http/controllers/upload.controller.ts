@@ -6,7 +6,7 @@ import { prisma } from '../../../infrastructure/database/prisma.js';
 
 export const uploadItemImages = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw new UnauthorizedError();
-  const itemId = req.params.id;
+  const itemId = String(req.params.id);
   const files = req.files as Express.Multer.File[];
   if (!files?.length) return res.status(400).json({ success: false, error: 'No files' });
 

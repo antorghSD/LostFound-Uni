@@ -1,0 +1,78 @@
+{
+  "app": {
+    "name": "UIU Lost & Found",
+    "tagline": "Report. Match. Recover."
+  },
+  "nav": {
+    "home": "Home",
+    "post": "Post Item",
+    "myItems": "My Items",
+    "claims": "Claims",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full Name",
+    "department": "Department",
+    "year": "Year",
+    "loginBtn": "Sign In",
+    "registerBtn": "Create Account",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "welcome": "Welcome back",
+    "createAccount": "Create your account"
+  },
+  "items": {
+    "lost": "Lost",
+    "found": "Found",
+    "all": "All",
+    "search": "Search items...",
+    "noItems": "No items found",
+    "postItem": "Post New Item",
+    "title": "Title",
+    "description": "Description",
+    "category": "Category",
+    "location": "Location",
+    "date": "Date",
+    "reward": "Reward (optional)",
+    "submit": "Submit"
+  },
+  "profile": {
+    "myItems": "My Items",
+    "claims": "My Claims",
+    "received": "Received",
+    "reputation": "Reputation",
+    "details": "Profile Details",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit"
+  }
+  ,
+  "nav": {
+  "home": "Home",
+  "post": "Post Item",
+  "myItems": "My Items",
+  "claims": "Claims",
+  "notifications": "Notifications",
+  "profile": "Profile",
+  "login": "Login",
+  "register": "Register",
+  "logout": "Logout",
+  "matches": "Matches"
+}
+}

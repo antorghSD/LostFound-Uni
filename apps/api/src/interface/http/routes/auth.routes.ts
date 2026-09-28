@@ -1,7 +1,20 @@
 import { Router } from 'express';
 import { validate } from '../middlewares/validate.js';
-import { loginSchema, refreshSchema, registerSchema } from '../validators/auth.validator.js';
-import { login, logout, refresh, register } from '../controllers/auth.controller.js';
+import { authenticate } from '../middlewares/auth.js';
+import {
+  loginSchema,
+  refreshSchema,
+  registerSchema,
+  changePasswordSchema,
+} from '../validators/auth.validator.js';
+import {
+  login,
+  logout,
+  refresh,
+  register,
+  me,
+  changePassword,
+} from '../controllers/auth.controller.js';
 
 const router = Router();
 
@@ -10,7 +23,7 @@ const router = Router();
  * /auth/register:
  *   post:
  *     tags: [Auth]
- *     summary: Register a new user
+ *     summary: Register a new user (only @uiu.ac.bd)
  *     requestBody:
  *       required: true
  *       content:
@@ -20,7 +33,7 @@ const router = Router();
  *             required: [name, email, password]
  *             properties:
  *               name: { type: string, example: "Rahim Uddin" }
- *               email: { type: string, example: "rahim@university.edu" }
+ *               email: { type: string, example: "rahim@uiu.ac.bd" }
  *               password: { type: string, example: "RahimPass123" }
  *               department: { type: string, example: "CSE" }
  *               year: { type: integer, example: 3 }
@@ -46,7 +59,7 @@ router.post('/register', validate(registerSchema), register);
  *             type: object
  *             required: [email, password]
  *             properties:
- *               email: { type: string, example: "rahim@university.edu" }
+ *               email: { type: string, example: "rahim@uiu.ac.bd" }
  *               password: { type: string, example: "RahimPass123" }
  *     responses:
  *       200:
@@ -95,5 +108,48 @@ router.post('/refresh', validate(refreshSchema), refresh);
  *         description: Logged out
  */
 router.post('/logout', validate(refreshSchema), logout);
+
+/**
+ * @openapi
+ * /auth/me:
+ *   get:
+ *     tags: [Auth]
+ *     summary: Get current user profile
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200:
+ *         description: Current user
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/me', authenticate, me);
+
+/**
+ * @openapi
+ * /auth/change-password:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Change password
+ *     security: [{ bearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [currentPassword, newPassword]
+ *             properties:
+ *               currentPassword: { type: string }
+ *               newPassword: { type: string }
+ *     responses:
+ *       200:
+ *         description: Password changed
+ */
+router.post(
+  '/change-password',
+  authenticate,
+  validate(changePasswordSchema),
+  changePassword
+);
 
 export default router;
