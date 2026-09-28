@@ -1,0 +1,345 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ ENUMS ============
+enum Role {
+  STUDENT
+  STAFF
+  SECURITY_OFFICER
+  ADMIN
+}
+
+enum ItemType {
+  LOST
+  FOUND
+}
+
+enum ItemStatus {
+  OPEN
+  MATCHED
+  CLAIMED
+  RESOLVED
+  ARCHIVED
+}
+
+enum Visibility {
+  PUBLIC
+  UNIVERSITY_ONLY
+}
+
+enum ClaimStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  DISPUTED
+}
+
+enum MatchStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum NotificationType {
+  MATCH_FOUND
+  CLAIM_NEW
+  CLAIM_MESSAGE
+  CLAIM_APPROVED
+  CLAIM_REJECTED
+  HANDOVER_SCHEDULED
+  HANDOVER_COMPLETED
+  ITEM_EXPIRING
+  SYSTEM
+}
+
+// ============ MODELS ============
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  role          Role      @default(STUDENT)
+  studentId     String?   @unique
+  department    String?
+  year          Int?
+  phone         String?
+  avatarUrl     String?
+  bio           String?   @db.Text
+
+  isEmailVerified Boolean @default(false)
+  isVerified      Boolean @default(false)
+  isBanned        Boolean @default(false)
+  banReason       String?
+
+  reputationScore Int     @default(0)
+
+  twofaEnabled  Boolean @default(false)
+  twofaSecret   String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  items         Item[]
+  claims        Claim[]         @relation("ClaimantClaims")
+  ownedClaims   Claim[]         @relation("OwnerClaims")
+  claimMessages ClaimMessage[]
+  notifications Notification[]
+  sessions      Session[]
+  auditLogs     AuditLog[]
+  reportsMade   Report[]        @relation("Reporter")
+  savedSearches SavedSearch[]
+  handovers     Handover[]      @relation("Officer")
+
+  @@index([role])
+  @@index([isBanned])
+}
+
+model Session {
+  id               String   @id @default(cuid())
+  userId           String
+  refreshTokenHash String
+  device           String?
+  ip               String?
+  userAgent        String?
+  expiresAt        DateTime
+  createdAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Category {
+  id       String  @id @default(cuid())
+  name     String  @unique
+  slug     String  @unique
+  icon     String?
+  parentId String?
+  isActive Boolean @default(true)
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryTree")
+  items    Item[]
+}
+
+model HandoverLocation {
+  id       String  @id @default(cuid())
+  name     String
+  building String?
+  room     String?
+  isActive Boolean @default(true)
+
+  handovers Handover[]
+}
+
+model Item {
+  id          String    @id @default(cuid())
+  userId      String
+  type        ItemType
+  title       String
+  description String    @db.Text
+  categoryId  String
+  brand       String?
+  color       String?
+
+  building  String?
+  floor     String?
+  room      String?
+  latitude  Float?
+  longitude Float?
+
+  lostFoundDate DateTime
+  reward        String?
+
+  status     ItemStatus @default(OPEN)
+  visibility Visibility @default(UNIVERSITY_ONLY)
+
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user         User       @relation(fields: [userId], references: [id])
+  category     Category   @relation(fields: [categoryId], references: [id])
+  images       ItemImage[]
+  matchesLost  Match[]    @relation("LostItem")
+  matchesFound Match[]    @relation("FoundItem")
+  claims       Claim[]
+  reports      Report[]
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([categoryId])
+  @@index([createdAt])
+}
+
+model ItemImage {
+  id     String @id @default(cuid())
+  itemId String
+  url    String
+  order  Int    @default(0)
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+}
+
+model Match {
+  id          String      @id @default(cuid())
+  lostItemId  String
+  foundItemId String
+  score       Float
+  signals     Json?
+  status      MatchStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+
+  lostItem  Item @relation("LostItem", fields: [lostItemId], references: [id], onDelete: Cascade)
+  foundItem Item @relation("FoundItem", fields: [foundItemId], references: [id], onDelete: Cascade)
+
+  @@unique([lostItemId, foundItemId])
+  @@index([score])
+}
+
+model Claim {
+  id               String      @id @default(cuid())
+  itemId           String
+  claimantId       String
+  ownerId          String
+  message          String      @db.Text
+  proofUrl         String?
+  challengeAnswers Json?
+  status           ClaimStatus @default(PENDING)
+  rejectionReason  String?
+  approvedAt       DateTime?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  item     Item           @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  claimant User           @relation("ClaimantClaims", fields: [claimantId], references: [id])
+  owner    User           @relation("OwnerClaims", fields: [ownerId], references: [id])
+  messages ClaimMessage[]
+  handover Handover?
+
+  @@index([itemId])
+  @@index([claimantId])
+  @@index([ownerId])
+  @@index([status])
+}
+
+model ClaimMessage {
+  id            String    @id @default(cuid())
+  claimId       String
+  senderId      String
+  message       String    @db.Text
+  attachmentUrl String?
+  readAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  claim  Claim @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  sender User  @relation(fields: [senderId], references: [id])
+
+  @@index([claimId])
+}
+
+model Handover {
+  id                  String    @id @default(cuid())
+  claimId             String    @unique
+  scheduledAt         DateTime
+  locationId          String
+  officerId           String?
+  storageShelf        String?
+  qrCode              String    @unique
+  confirmedByOwner    Boolean   @default(false)
+  confirmedByClaimant Boolean   @default(false)
+  completedAt         DateTime?
+  createdAt           DateTime  @default(now())
+
+  claim    Claim            @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  location HandoverLocation @relation(fields: [locationId], references: [id])
+  officer  User?            @relation("Officer", fields: [officerId], references: [id])
+
+  @@index([claimId])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String           @db.Text
+  link      String?
+  isRead    Boolean          @default(false)
+  metadata  Json?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+}
+
+model Report {
+  id         String       @id @default(cuid())
+  reporterId String
+  itemId     String?
+  targetType String
+  targetId   String
+  reason     String
+  details    String?      @db.Text
+  status     ReportStatus @default(PENDING)
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt  DateTime     @default(now())
+
+  reporter User  @relation("Reporter", fields: [reporterId], references: [id])
+  item     Item? @relation(fields: [itemId], references: [id])
+
+  @@index([status])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String
+  targetType String?
+  targetId   String?
+  ip         String?
+  userAgent  String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model SavedSearch {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  query     Json
+  notify    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
