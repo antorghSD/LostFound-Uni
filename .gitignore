@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build
+dist/
+build/
+.next/
+out/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+pnpm-debug.log*
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+apps/api/prisma/*.db
+
+# Uploads (local dev)
+apps/api/uploads/
+
+# Turbo
+.turbo/
+
+# Test
+coverage/

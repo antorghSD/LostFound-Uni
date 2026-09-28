@@ -1,21 +1,24 @@
 {
-  "name": "LostFound-Uni",
+  "name": "lost-found-university",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "University Lost & Found Platform",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "db:up": "docker compose -f docker/docker-compose.yml up -d",
+    "db:down": "docker compose -f docker/docker-compose.yml down"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "12.6.0",
-      "onFail": "download"
-    }
+  "devDependencies": {
+    "turbo": "^2.1.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.5.0"
   },
-  "packageManager": "pnpm@12.6.0",
-  "type": "module"
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }
