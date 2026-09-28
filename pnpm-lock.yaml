@@ -80,7 +80,7 @@ importers:
         version: 19.3.0(@types/react@19.3.0)
       '@vitejs/plugin-react':
         specifier: ^6.1.1
-        version: 6.1.1(vite@8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)(yaml@2.0.0-1))
+        version: 6.1.1(vite@8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15))
       autoprefixer:
         specifier: ^10.6.1
         version: 10.6.1(postcss@8.5.28)
@@ -92,13 +92,13 @@ importers:
         version: 8.5.28
       tailwindcss:
         specifier: '3'
-        version: 3.4.19(tsx@4.23.15)(yaml@2.0.0-1)
+        version: 3.4.19(tsx@4.23.15)
       typescript:
         specifier: ~6.0.2
         version: 6.0.3
       vite:
         specifier: ^8.3.0
-        version: 8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)(yaml@2.0.0-1)
+        version: 8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)
 
   apps/api:
     dependencies:
@@ -141,6 +141,9 @@ importers:
       multer:
         specifier: ^2.4.0
         version: 2.4.0
+      nodemailer:
+        specifier: ^10.0.12
+        version: 10.0.12
       pino:
         specifier: ^9.4.0
         version: 9.14.0
@@ -184,6 +187,9 @@ importers:
       '@types/node':
         specifier: ^22.7.0
         version: 22.20.4
+      '@types/nodemailer':
+        specifier: ^8.0.2
+        version: 8.0.2
       '@types/supertest':
         specifier: ^7.2.1
         version: 7.2.1
@@ -295,7 +301,7 @@ importers:
         version: 19.3.0(@types/react@19.3.0)
       '@vitejs/plugin-react':
         specifier: ^6.1.1
-        version: 6.1.1(vite@8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)(yaml@2.0.0-1))
+        version: 6.1.1(vite@8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15))
       autoprefixer:
         specifier: ^10.6.1
         version: 10.6.1(postcss@8.5.28)
@@ -307,13 +313,13 @@ importers:
         version: 8.5.28
       tailwindcss:
         specifier: ^3.4.19
-        version: 3.4.19(tsx@4.23.15)(yaml@2.0.0-1)
+        version: 3.4.19(tsx@4.23.15)
       typescript:
         specifier: ~6.0.2
         version: 6.0.3
       vite:
         specifier: ^8.3.0
-        version: 8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)(yaml@2.0.0-1)
+        version: 8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)
 
   packages/config: {}
 
@@ -1316,6 +1322,9 @@ packages:
   '@types/node@24.19.0':
     resolution: {integrity: sha512-zY+5tKxXdhGh1PYI0ac+7juvEu4OI6vWtVVoj5i2m42jxAY1U+zHGt6QCyOFwykdP62sM3MJ9stoYYUw5aCWew==}
 
+  '@types/nodemailer@8.0.2':
+    resolution: {integrity: sha512-c7M5ox8p0nEOfbJ2E9Qcmt8/QCu/VzsiAhzBiZbvky2PhKZDHpKB3sQHBM5MEZNkCfBOaS6S9//AGPRTNB7IaA==}
+
   '@types/qs@6.15.1':
     resolution: {integrity: sha512-GZHUBZR9hckSUhrxmp1nG6NwdpM9fCunJwyThLW1X3AyHgd9IlHb6VANpQQqDr2o/qQp6McZ3y/IA2rVzKzSbw==}
 
@@ -2312,6 +2321,10 @@ packages:
   node-releases@2.0.57:
     resolution: {integrity: sha512-kQK9LGGFiHtrWiNhZtA7Qbw17AQz+dmsEKODRIVTXA9+e5MS/2gZEBhYJt13GrAz5/IOZKddH/0Z3TP/Zgo+yw==}
     engines: {node: '>=18'}
+
+  nodemailer@10.0.12:
+    resolution: {integrity: sha512-PQ46oNbNMuH/Sno7B5IWIU9etytwrO0xdTFvWXpIQFRXhBAXtzD48243AS+BCbQQTPD8y3fqUrgLn0tSo77gvg==}
+    engines: {node: '>=20.0.0'}
 
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
@@ -3664,6 +3677,10 @@ snapshots:
     dependencies:
       undici-types: 7.24.6
 
+  '@types/nodemailer@8.0.2':
+    dependencies:
+      '@types/node': 24.19.0
+
   '@types/qs@6.15.1': {}
 
   '@types/range-parser@1.2.7': {}
@@ -3714,10 +3731,10 @@ snapshots:
     dependencies:
       '@types/node': 24.19.0
 
-  '@vitejs/plugin-react@6.1.1(vite@8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)(yaml@2.0.0-1))':
+  '@vitejs/plugin-react@6.1.1(vite@8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)(yaml@2.0.0-1)
+      vite: 8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)
 
   '@vitest/expect@2.1.9':
     dependencies:
@@ -4660,6 +4677,8 @@ snapshots:
 
   node-releases@2.0.57: {}
 
+  nodemailer@10.0.12: {}
+
   normalize-path@3.0.0: {}
 
   object-assign@4.1.1: {}
@@ -4788,14 +4807,13 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.5.28
 
-  postcss-load-config@6.0.1(jiti@1.21.7)(postcss@8.5.28)(tsx@4.23.15)(yaml@2.0.0-1):
+  postcss-load-config@6.0.1(jiti@1.21.7)(postcss@8.5.28)(tsx@4.23.15):
     dependencies:
       lilconfig: 3.1.3
     optionalDependencies:
       jiti: 1.21.7
       postcss: 8.5.28
       tsx: 4.23.15
-      yaml: 2.0.0-1
 
   postcss-nested@6.2.0(postcss@8.5.28):
     dependencies:
@@ -5221,7 +5239,7 @@ snapshots:
 
   tailwind-merge@3.7.0: {}
 
-  tailwindcss@3.4.19(tsx@4.23.15)(yaml@2.0.0-1):
+  tailwindcss@3.4.19(tsx@4.23.15):
     dependencies:
       '@alloc/quick-lru': 5.3.0
       arg: 5.0.2
@@ -5240,7 +5258,7 @@ snapshots:
       postcss: 8.5.28
       postcss-import: 15.1.0(postcss@8.5.28)
       postcss-js: 4.1.0(postcss@8.5.28)
-      postcss-load-config: 6.0.1(jiti@1.21.7)(postcss@8.5.28)(tsx@4.23.15)(yaml@2.0.0-1)
+      postcss-load-config: 6.0.1(jiti@1.21.7)(postcss@8.5.28)(tsx@4.23.15)
       postcss-nested: 6.2.0(postcss@8.5.28)
       postcss-selector-parser: 6.1.4
       resolve: 1.22.12
@@ -5381,7 +5399,7 @@ snapshots:
       fsevents: 2.3.3
       lightningcss: 1.33.0
 
-  vite@8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15)(yaml@2.0.0-1):
+  vite@8.3.1(@types/node@24.19.0)(esbuild@0.28.2)(jiti@1.21.7)(tsx@4.23.15):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -5394,7 +5412,6 @@ snapshots:
       fsevents: 2.3.3
       jiti: 1.21.7
       tsx: 4.23.15
-      yaml: 2.0.0-1
 
   vitest@2.1.9(@types/node@22.20.4)(lightningcss@1.33.0):
     dependencies:

@@ -478,19 +478,36 @@ router.get(
   })
 );
 
+// Test email endpoint
 router.post(
-  '/locations',
+  '/test-email',
   asyncHandler(async (req, res) => {
-    const loc = await prisma.handoverLocation.create({ data: req.body });
-    await prisma.auditLog.create({
-      data: {
-        actorId: req.user!.id,
-        action: 'admin.location.create',
-        targetType: 'location',
-        targetId: loc.id,
-      },
+    const { email } = req.body;
+    if (!email) throw new AppError('Email required', 400);
+
+    const { sendEmail } = await import('../../../infrastructure/email/email.service.js');
+
+    const result = await sendEmail({
+      to: email,
+      subject: '🎉 Test Email — UIU Lost & Found',
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;">
+          <div style="background:linear-gradient(135deg,#F26522,#D9541A);color:white;padding:32px;border-radius:16px 16px 0 0;text-align:center;">
+            <h1 style="margin:0;font-size:24px;">Email Setup Working! ✅</h1>
+          </div>
+          <div style="background:white;padding:32px;border-radius:0 0 16px 16px;border:1px solid #e5e4e7;">
+            <p style="color:#1A2332;font-size:16px;">Hi there,</p>
+            <p style="color:#4a5568;line-height:1.6;">
+              This is a test email from <strong>UIU Lost &amp; Found</strong>.
+              If you received this, your email setup is working correctly.
+            </p>
+            <p style="color:#9ca3af;font-size:13px;margin-top:32px;">— UIU Lost &amp; Found Team</p>
+          </div>
+        </div>
+      `,
     });
-    res.status(201).json({ success: true, data: loc });
+
+    res.json({ success: result.success, data: result });
   })
 );
 

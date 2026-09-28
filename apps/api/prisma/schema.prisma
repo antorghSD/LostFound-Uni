@@ -87,6 +87,11 @@ model User {
 
   reputationScore Int     @default(0)
 
+  // ⬇️ NEW: Email notification preferences
+  emailMatches      Boolean @default(true)
+  emailWeeklyDigest Boolean @default(true)
+  emailClaims       Boolean @default(true)
+
   twofaEnabled  Boolean @default(false)
   twofaSecret   String?
 

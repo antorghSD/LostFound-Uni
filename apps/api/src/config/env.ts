@@ -20,6 +20,20 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRES: z.string().default('7d'),
 
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
+
+  // Cloudinary
+  CLOUDINARY_CLOUD_NAME: z.string().optional(),
+  CLOUDINARY_API_KEY: z.string().optional(),
+  CLOUDINARY_API_SECRET: z.string().optional(),
+
+  // Email (Gmail SMTP)
+  SMTP_HOST: z.string().default('smtp.gmail.com'),
+  SMTP_PORT: z.coerce.number().default(587),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  EMAIL_FROM: z.string().default('UIU Lost & Found <noreply@uiu.ac.bd>'),
+  EMAIL_FROM_NAME: z.string().default('UIU Lost & Found'),
+  APP_URL: z.string().default('http://localhost:5173'),
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -3,7 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
-
+import { startEmailWorker } from './infrastructure/queue/email.queue.js';
+import { verifyEmailConnection } from './infrastructure/email/email.service.js';
 
 import { env } from './config/env.js';
 import { logger } from './config/logger.js';
@@ -53,6 +54,8 @@ initSocket(httpServer);
 
 // ---------- Background worker ----------
 startMatchingWorker();
+startEmailWorker();
+verifyEmailConnection();
 
 // ---------- Start ----------
 httpServer.listen(env.PORT, () => {
