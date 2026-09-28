@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 40% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 40% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 40% 12%;
+
+    --primary: 18 88% 54%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 40% 12%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 42%;
+
+    --accent: 210 40% 93%;
+    --accent-foreground: 222 40% 12%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 90%;
+    --input: 214 32% 90%;
+    --ring: 18 88% 54%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222 45% 8%;
+    --foreground: 30 20% 96%;
+
+    --card: 222 42% 11%;
+    --card-foreground: 30 20% 96%;
+
+    --popover: 222 42% 11%;
+    --popover-foreground: 30 20% 96%;
+
+    --primary: 18 88% 54%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 35% 16%;
+    --secondary-foreground: 30 20% 96%;
+
+    --muted: 222 35% 16%;
+    --muted-foreground: 30 10% 65%;
+
+    --accent: 222 35% 18%;
+    --accent-foreground: 30 20% 96%;
+
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 30 20% 96%;
+
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 18 88% 54%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    text-align: left;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Selection */
+::selection {
+  background: hsl(var(--primary) / 0.2);
+  color: hsl(var(--foreground));
+}

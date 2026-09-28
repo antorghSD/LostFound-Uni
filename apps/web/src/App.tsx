@@ -1,7 +1,10 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import PageTransition from '@/components/PageTransition';
+import LoadingBar from '@/components/LoadingBar';
 import HomePage from '@/features/items/pages/HomePage';
 import PostItemPage from '@/features/items/pages/PostItemPage';
 import ItemDetailPage from '@/features/items/pages/ItemDetailPage';
@@ -16,28 +19,117 @@ import MatchesPage from '@/features/matches/pages/MatchesPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 export default function App() {
+  const location = useLocation();
+
   return (
     <div className="flex min-h-screen flex-col">
+      <LoadingBar />
       <Navbar />
       <main className="flex-1">
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/" element={<HomePage />} />
-          <Route path="/item/:id" element={<ItemDetailPage />} />
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route
+              path="/login"
+              element={
+                <PageTransition>
+                  <LoginPage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PageTransition>
+                  <RegisterPage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <PageTransition>
+                  <HomePage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/item/:id"
+              element={
+                <PageTransition>
+                  <ItemDetailPage />
+                </PageTransition>
+              }
+            />
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/post" element={<PostItemPage />} />
-            <Route path="/my-items" element={<MyItemsPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/claims" element={<MyClaimsPage />} />
-            <Route path="/claims/:id" element={<ClaimDetailPage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/matches/:itemId" element={<MatchesPage />} />
-          </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route
+                path="/post"
+                element={
+                  <PageTransition>
+                    <PostItemPage />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/my-items"
+                element={
+                  <PageTransition>
+                    <MyItemsPage />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <PageTransition>
+                    <ProfilePage />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/claims"
+                element={
+                  <PageTransition>
+                    <MyClaimsPage />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/claims/:id"
+                element={
+                  <PageTransition>
+                    <ClaimDetailPage />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <PageTransition>
+                    <NotificationsPage />
+                  </PageTransition>
+                }
+              />
+              <Route
+                path="/matches/:itemId"
+                element={
+                  <PageTransition>
+                    <MatchesPage />
+                  </PageTransition>
+                }
+              />
+            </Route>
 
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+            <Route
+              path="*"
+              element={
+                <PageTransition>
+                  <NotFoundPage />
+                </PageTransition>
+              }
+            />
+          </Routes>
+        </AnimatePresence>
       </main>
       <Footer />
     </div>
