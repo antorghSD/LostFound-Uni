@@ -7,7 +7,6 @@ export const registerBodySchema = z.object({
     .email()
     .refine(
   (email) =>
-    email.endsWith('@uiu.ac.bd') ||
     email.endsWith('@bscse.uiu.ac.bd') ||
     email.endsWith('@bseee.uiu.ac.bd') ||
     email.endsWith('@bspharmecy.uiu.ac.bd') ||
