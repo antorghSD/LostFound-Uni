@@ -8,8 +8,9 @@ import { matchFoundTemplate } from '../email/templates/match-found.js';
 
 const connection = new IORedis(env.REDIS_URL, {
   maxRetriesPerRequest: null,
+  enableReadyCheck: false,
+  tls: env.REDIS_URL.startsWith('rediss://') ? {} : undefined,
 });
-
 export const emailQueue = new Queue('email', { connection });
 
 interface MatchEmailJob {
