@@ -5,9 +5,18 @@ export const registerBodySchema = z.object({
   email: z
     .string()
     .email()
-    .refine((email) => email.endsWith('@uiu.ac.bd'), {
-      message: 'Only @uiu.ac.bd email addresses are allowed',
-    }),
+    .refine(
+  (email) =>
+    email.endsWith('@uiu.ac.bd') ||
+    email.endsWith('@bscse.uiu.ac.bd') ||
+    email.endsWith('@bseee.uiu.ac.bd') ||
+    email.endsWith('@bspharmecy.uiu.ac.bd') ||
+    email.endsWith('@bsds.uiu.ac.bd') ||
+    email.endsWith('@bsbba.uiu.ac.bd'),
+  {
+    message: 'Only UIU student email addresses are allowed',
+  }
+),
   password: z
     .string()
     .min(10, 'Password must be at least 10 characters')
