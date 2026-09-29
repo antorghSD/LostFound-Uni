@@ -56,3 +56,93 @@ api.interceptors.response.use(
     }
   }
 );
+export interface ItemImage {
+  id: string;
+  url: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  icon?: string;
+}
+
+export interface Item {
+  id: string;
+  title: string;
+  description: string;
+  type: 'LOST' | 'FOUND' | string;
+  status: string;
+
+  images: ItemImage[];
+  category: Category;
+
+  building?: string;
+  floor?: string;
+  room?: string;
+
+  lostFoundDate: string;
+  brand?: string;
+  color?: string;
+  reward?: string;
+
+  createdAt: string;
+  updatedAt?: string;
+
+  userId?: string;
+  user?: {
+    id: string;
+    name: string;
+    email?: string;
+  };
+}
+
+export interface Claim {
+  id: string;
+  itemId: string;
+  claimantId?: string;
+  ownerId?: string;
+
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | string;
+  message?: string;
+
+  createdAt: string;
+  updatedAt?: string;
+
+  item?: Item;
+
+  claimant?: {
+    id: string;
+    name: string;
+    email?: string;
+  };
+
+  owner?: {
+    id: string;
+    name: string;
+    email?: string;
+  };
+}
+
+export interface ClaimMessage {
+  id: string;
+  claimId: string;
+  senderId?: string;
+  message: string;
+  createdAt: string;
+
+  sender?: {
+    id: string;
+    name: string;
+  };
+}
+
+export interface Notification {
+  id: string;
+  userId?: string;
+  title: string;
+  body: string;
+  isRead: boolean;
+  createdAt: string;
+  link?: string;
+}

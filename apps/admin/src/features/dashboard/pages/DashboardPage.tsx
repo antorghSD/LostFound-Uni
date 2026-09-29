@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
   Users, Package, CheckCircle, MessageSquare, Flag,
-  Sparkles, TrendingUp, Activity, PackageOpen,
+  Sparkles, TrendingUp, Activity, 
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip,

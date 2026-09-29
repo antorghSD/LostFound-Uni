@@ -12,7 +12,6 @@ import {
   Loader2,
 } from 'lucide-react';
 import { api } from '@/lib/api';
-import { useAuthStore } from '@/stores/authStore';
 
 interface Profile {
   id: string;
@@ -34,7 +33,7 @@ interface Profile {
 
 export default function ProfilePage() {
   const { t } = useTranslation();
-  const user = useAuthStore((s) => s.user);
+  
 
   const { data, isLoading } = useQuery({
     queryKey: ['me'],

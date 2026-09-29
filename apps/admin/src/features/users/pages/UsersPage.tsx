@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { Loader2, Search, Shield, ShieldOff, Ban, CheckCircle } from 'lucide-react';
+import { Loader2, Search, Shield,  Ban, CheckCircle } from 'lucide-react';
 import Topbar from '@/components/layout/Topbar';
 import { api, type AdminUserRow } from '@/lib/api';
 

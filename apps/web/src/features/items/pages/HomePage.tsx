@@ -35,7 +35,7 @@ export default function HomePage() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    refetch,
+    
   } = useInfiniteQuery({
     queryKey: ['items', type, debouncedQ, categoryId],
     queryFn: async ({ pageParam }) => {

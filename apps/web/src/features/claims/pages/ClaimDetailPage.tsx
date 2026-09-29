@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ArrowLeft, Loader2, Send } from 'lucide-react';
-import { api, type Claim, type ClaimMessage } from '@/lib/api';
+import { api, type ClaimMessage } from '@/lib/api';
 import { useAuthStore } from '@/stores/authStore';
 import { connectSocket } from '@/lib/socket';
 
