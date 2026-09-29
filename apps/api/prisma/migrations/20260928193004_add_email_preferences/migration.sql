@@ -1,4 +1,3 @@
--- AlterTable
-ALTER TABLE `user` ADD COLUMN `emailClaims` BOOLEAN NOT NULL DEFAULT true,
+ALTER TABLE `User` ADD COLUMN `emailClaims` BOOLEAN NOT NULL DEFAULT true,
     ADD COLUMN `emailMatches` BOOLEAN NOT NULL DEFAULT true,
     ADD COLUMN `emailWeeklyDigest` BOOLEAN NOT NULL DEFAULT true;
