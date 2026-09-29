@@ -9,7 +9,7 @@ A secure, real-time platform for university students, staff, and security office
 - **Frontend:** React + Vite + TypeScript + TanStack Query + Tailwind
 - **Realtime:** Socket.io
 - **Storage:** Cloudinary
-- **Infra:** Docker + GitHub Actions
+- **Infra:** GitHub Actions
 
 ## 📁 Structure
 
