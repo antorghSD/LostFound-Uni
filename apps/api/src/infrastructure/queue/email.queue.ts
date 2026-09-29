@@ -6,9 +6,7 @@ import { env } from '../../config/env.js';
 import { sendEmail } from '../email/email.service.js';
 import { matchFoundTemplate } from '../email/templates/match-found.js';
 
-const connection = new IORedis({
-  host: 'localhost',
-  port: 6379,
+const connection = new IORedis(env.REDIS_URL, {
   maxRetriesPerRequest: null,
 });
 

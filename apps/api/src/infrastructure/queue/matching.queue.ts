@@ -2,10 +2,9 @@ import { Queue, Worker } from 'bullmq';
 import IORedis from 'ioredis';
 import { matchService } from '../../application/use-cases/match.service.js';
 import { logger } from '../../config/logger.js';
+import { env } from '../../config/env.js';
 
-const connection = new IORedis({
-  host: 'localhost',
-  port: 6379,
+const connection = new IORedis(env.REDIS_URL, {
   maxRetriesPerRequest: null,
 });
 
