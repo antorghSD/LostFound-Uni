@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import { env } from '../../config/env.js';
 import { logger } from '../../config/logger.js';
 
-let transporter: nodemailer.Transporter | null = null;
+let transporter: ReturnType<typeof nodemailer.createTransport> | null = null;
 
 const getTransporter = () => {
   if (transporter) return transporter;

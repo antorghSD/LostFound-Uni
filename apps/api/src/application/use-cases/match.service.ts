@@ -2,6 +2,7 @@ import { prisma } from '../../infrastructure/database/prisma.js';
 import { scoreMatch } from '../../domain/services/matchScore.js';
 import { logger } from '../../config/logger.js';
 import { emailQueue } from '../../infrastructure/queue/email.queue.js';
+import { emitToUser } from '../../interface/socket/index.js';
 const MATCH_THRESHOLD = 0.55;
 
 export class MatchService {
