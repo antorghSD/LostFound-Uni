@@ -12,9 +12,9 @@ const schema = z.object({
   email: z
     .string()
     .email('Invalid email')
-    .refine((email) => email.endsWith('@uiu.ac.bd'), {
-      message: 'Only @uiu.ac.bd emails are allowed',
-    }),
+    .refine((email) => /^[^\s@]+@([a-z0-9-]+\.)*uiu\.ac\.bd$/i.test(email), {
+  message: 'Only UIU student email addresses are allowed',
+}),
   password: z
     .string()
     .min(10, 'Minimum 10 characters')
