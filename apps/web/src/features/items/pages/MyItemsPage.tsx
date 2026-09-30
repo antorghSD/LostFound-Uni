@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +9,9 @@ import { api, type Item } from '@/lib/api';
 export default function MyItemsPage() {
   const { t } = useTranslation();
   const qc = useQueryClient();
+
+  // 🆕 Delete confirm modal state
+  const [confirmDelete, setConfirmDelete] = useState<Item | null>(null);
 
   const { data: items, isLoading } = useQuery({
     queryKey: ['my-items'],
@@ -23,10 +27,12 @@ export default function MyItemsPage() {
     },
     onSuccess: () => {
       toast.success('Item deleted');
+      setConfirmDelete(null);
       qc.invalidateQueries({ queryKey: ['my-items'] });
       qc.invalidateQueries({ queryKey: ['items'] });
     },
-    onError: (e: any) => toast.error(e.response?.data?.error || 'Failed to delete'),
+    onError: (e: any) =>
+      toast.error(e.response?.data?.error || 'Failed to delete'),
   });
 
   if (isLoading) {
@@ -88,23 +94,56 @@ export default function MyItemsPage() {
                   </span>
                   <span className="text-xs text-muted-foreground">{item.category.name}</span>
                 </div>
-                <Link to={`/item/${item.id}`} className="mt-1 line-clamp-1 font-semibold hover:text-uiu-orange">
+                <Link
+                  to={`/item/${item.id}`}
+                  className="mt-1 line-clamp-1 font-semibold hover:text-uiu-orange"
+                >
                   {item.title}
                 </Link>
                 <p className="text-xs text-muted-foreground">
                   {new Date(item.createdAt).toLocaleDateString()} · Status: {item.status}
                 </p>
               </div>
+              {/* 🆕 Custom modal trigger */}
               <button
-                onClick={() => {
-                  if (confirm('Delete this item?')) deleteMutation.mutate(item.id);
-                }}
+                onClick={() => setConfirmDelete(item)}
                 className="self-start rounded-md p-2 text-destructive hover:bg-muted"
+                title="Delete"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* 🆕 Delete Confirmation Modal */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-lg">
+            <h3 className="text-lg font-semibold">Delete this item?</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Are you sure you want to delete{' '}
+              <span className="font-medium text-foreground">{confirmDelete.title}</span>?
+              This action cannot be undone.
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => deleteMutation.mutate(confirmDelete.id)}
+                disabled={deleteMutation.isPending}
+                className="flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {deleteMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

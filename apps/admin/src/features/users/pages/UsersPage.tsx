@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { Loader2, Search, Shield,  Ban, CheckCircle } from 'lucide-react';
+import { Loader2, Search, Shield, Ban, CheckCircle, Trash2 } from 'lucide-react';
 import Topbar from '@/components/layout/Topbar';
 import { api, type AdminUserRow } from '@/lib/api';
 
@@ -9,6 +9,7 @@ export default function UsersPage() {
   const qc = useQueryClient();
   const [q, setQ] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState<AdminUserRow | null>(null);
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin-users', q, roleFilter],
@@ -44,6 +45,19 @@ export default function UsersPage() {
     onSuccess: () => {
       toast.success('Role updated');
       qc.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+  });
+
+  // 🆕 Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.delete(`/admin/users/${id}`),
+    onSuccess: () => {
+      toast.success('User deleted');
+      setConfirmDelete(null);
+      qc.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+    onError: () => {
+      toast.error('Failed to delete user');
     },
   });
 
@@ -149,6 +163,14 @@ export default function UsersPage() {
                         >
                           {u.isBanned ? <CheckCircle className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
                         </button>
+                        {/* 🆕 Delete button */}
+                        <button
+                          onClick={() => setConfirmDelete(u)}
+                          className="rounded p-1.5 text-red-600 hover:bg-red-50"
+                          title="Delete"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -158,6 +180,36 @@ export default function UsersPage() {
           )}
         </div>
       </div>
+
+      {/* 🆕 Confirmation Modal */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-lg">
+            <h3 className="text-lg font-semibold">Delete user?</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Are you sure you want to delete{' '}
+              <span className="font-medium text-foreground">{confirmDelete.name}</span> (
+              {confirmDelete.email})? This action cannot be undone.
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => deleteMutation.mutate(confirmDelete.id)}
+                disabled={deleteMutation.isPending}
+                className="flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {deleteMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

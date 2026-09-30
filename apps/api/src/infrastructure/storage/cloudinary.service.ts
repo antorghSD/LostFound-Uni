@@ -5,14 +5,6 @@ export const uploadImage = (buffer: Buffer): Promise<string> =>
     cloudinary.uploader.upload_stream(
       {
         folder: 'lost-found',
-        resource_type: 'image',
-        transformation: [
-          {
-            width: 1200,
-            crop: 'limit',
-            quality: 'auto',
-          },
-        ],
       },
       (error, result) => {
         if (error) {
@@ -21,11 +13,11 @@ export const uploadImage = (buffer: Buffer): Promise<string> =>
         }
 
         if (!result) {
-          console.error('CLOUDINARY UPLOAD: No result');
+          console.error('CLOUDINARY NO RESULT');
           return reject(new Error('Cloudinary returned no result'));
         }
 
-        console.log('CLOUDINARY UPLOAD OK:', result.secure_url);
+        console.log('CLOUDINARY UPLOAD SUCCESS:', result.secure_url);
 
         resolve(result.secure_url);
       }

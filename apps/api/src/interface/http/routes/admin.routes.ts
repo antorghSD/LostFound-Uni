@@ -436,37 +436,99 @@ router.patch(
   })
 );
 
+// HARD DELETE — permanently removes user + all related data
 router.delete(
-  '/categories/:id',
+  '/users/:id',
   asyncHandler(async (req, res) => {
     const id = String(req.params.id);
 
-    const itemCount = await prisma.item.count({
-      where: { categoryId: id, deletedAt: null },
-    });
-
-    if (itemCount > 0) {
-      throw new AppError(
-        `Cannot delete — ${itemCount} item(s) use this category. Disable it instead.`,
-        409
-      );
+    // ❌ Nijeke delete korte parbe na
+    if (id === req.user!.id) {
+      throw new AppError("You can't delete your own account", 400);
     }
 
-    await prisma.category.delete({ where: { id } });
+    // User exists check
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { id: true, email: true, name: true, role: true },
+    });
+    if (!user) throw new AppError('User not found', 404);
 
+    // ⚠️ Optional: Last admin protect
+    if (user.role === 'ADMIN') {
+      const adminCount = await prisma.user.count({
+        where: { role: 'ADMIN', deletedAt: null },
+      });
+      if (adminCount <= 1) {
+        throw new AppError('Cannot delete the last remaining admin', 400);
+      }
+    }
+
+    // 🔥 Transaction — sob related data age delete, tarpor user
+    await prisma.$transaction(async (tx) => {
+      // 1. User er post kora item gulo
+      const userItems = await tx.item.findMany({
+        where: { userId: id },
+        select: { id: true },
+      });
+      const itemIds = userItems.map((i) => i.id);
+
+      if (itemIds.length > 0) {
+        // Items er related data
+        await tx.match.deleteMany({
+          where: {
+            OR: [{ lostItemId: { in: itemIds } }, { foundItemId: { in: itemIds } }],
+          },
+        });
+        await tx.claim.deleteMany({ where: { itemId: { in: itemIds } } });
+        await tx.itemImage.deleteMany({ where: { itemId: { in: itemIds } } });
+        await tx.item.deleteMany({ where: { id: { in: itemIds } } });
+      }
+
+      // 2. User er nijer claim gulo
+      await tx.claim.deleteMany({ where: { claimantId: id } });
+
+      // 3. User er item er upor onno keu claim korle (owner hisebe)
+      await tx.claim.deleteMany({ where: { ownerId: id } });
+
+      // 4. Matches jekhane user involved
+      await tx.match.deleteMany({
+        where: { OR: [{ lostItem: { userId: id } }, { foundItem: { userId: id } }] },
+      });
+
+      // 5. Notifications
+      await tx.notification.deleteMany({ where: { userId: id } });
+
+      // 6. Reports (reporter hisebe)
+      await tx.report.deleteMany({ where: { reporterId: id } });
+
+      // 7. Messages (jodi chat feature thake)
+      // await tx.message.deleteMany({ where: { OR: [{ senderId: id }, { receiverId: id }] } });
+
+      // 8. Audit logs — actor hisebe thakle null koro (log rakhতে chai)
+      await tx.auditLog.updateMany({
+        where: { actorId: id },
+        data: { actorId: null as any }, // actorId nullable hole
+      });
+
+      // 9. Finally — user delete
+      await tx.user.delete({ where: { id } });
+    });
+
+    // Audit log (delete er record)
     await prisma.auditLog.create({
       data: {
         actorId: req.user!.id,
-        action: 'admin.category.delete',
-        targetType: 'category',
+        action: 'admin.user.delete',
+        targetType: 'user',
         targetId: id,
+        metadata: { email: user.email, name: user.name, role: user.role },
       },
     });
 
-    res.json({ success: true });
+    res.json({ success: true, message: 'User permanently deleted' });
   })
 );
-
 // ============ LOCATIONS ============
 router.get(
   '/locations',

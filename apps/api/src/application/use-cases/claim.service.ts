@@ -72,6 +72,53 @@ export class ClaimService {
     return updated;
   }
 
+  // 🆕 Claimant nijer claim edit korbe (only PENDING)
+  async updateMine(claimId: string, userId: string, message: string) {
+    if (!message || message.trim().length === 0) {
+      throw new ConflictError('Message cannot be empty');
+    }
+
+    const claim = await prisma.claim.findUnique({ where: { id: claimId } });
+    if (!claim) throw new NotFoundError('Claim not found');
+
+    // 🛡️ Only claimant
+    if (claim.claimantId !== userId) throw new ForbiddenError('Not your claim');
+
+    // 🛡️ Only PENDING
+    if (claim.status !== 'PENDING') {
+      throw new ConflictError('You can only edit pending claims');
+    }
+
+    return prisma.claim.update({
+      where: { id: claimId },
+      data: { message: message.trim() },
+    });
+  }
+
+  // 🆕 Claimant nijer claim withdraw korbe (only PENDING)
+  async withdraw(claimId: string, userId: string) {
+    const claim = await prisma.claim.findUnique({
+      where: { id: claimId },
+      include: { item: { select: { status: true } } },
+    });
+    if (!claim) throw new NotFoundError('Claim not found');
+
+    // 🛡️ Only claimant
+    if (claim.claimantId !== userId) throw new ForbiddenError('Not your claim');
+
+    // 🛡️ Only PENDING
+    if (claim.status !== 'PENDING') {
+      throw new ConflictError('You can only withdraw pending claims');
+    }
+
+    // 🛡️ Item RESOLVED hole withdraw block
+    if (claim.item?.status === 'RESOLVED') {
+      throw new ConflictError('Item already resolved — cannot withdraw');
+    }
+
+    await prisma.claim.delete({ where: { id: claimId } });
+  }
+
   async getMessages(claimId: string, userId: string) {
     const claim = await prisma.claim.findUnique({ where: { id: claimId } });
     if (!claim) throw new NotFoundError();
